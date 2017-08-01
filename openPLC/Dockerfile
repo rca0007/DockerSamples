@@ -27,3 +27,5 @@ RUN cd codeOpenPLC && git clone https://github.com/thiagoralves/OpenPLC_v2.git
  
 RUN cd codeOpenPLC/OpenPLC_v2 && echo "4" | ./build.sh
 
+RUN sudo nodejs server.js
+
