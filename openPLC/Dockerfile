@@ -24,8 +24,17 @@ RUN cd codeWiringPi/wiringPi && ./build
 # get PLC code and build
 RUN mkdir codeOpenPLC
 RUN cd codeOpenPLC && git clone https://github.com/thiagoralves/OpenPLC_v2.git
- 
-RUN cd codeOpenPLC/OpenPLC_v2 && echo "4" | ./build.sh
 
-RUN sudo nodejs server.js
+RUN export TERM=dumb && cd codeOpenPLC/OpenPLC_v2 && echo "N\n4" | ./build.sh
 
+# get the program
+RUN mkdir robDockerStuff
+RUN cd robDockerStuff && git clone https://github.com/rca0007/DockerSamples.git
+
+
+# begin compilation (inspired by openPLC server.js file)
+RUN cd codeOpenPLC/OpenPLC_v2 && ./iec2c  ../../robDockerStuff/DockerSamples/openPLC/*.st
+RUN cd codeOpenPLC/OpenPLC_v2 && mv -f POUS.c POUS.h LOCATED_VARIABLES.h VARIABLES.csv Config0.c Config0.h Res0.c ./core/
+RUN cd codeOpenPLC/OpenPLC_v2 && ./build_core.sh 
+
+CMD cd codeOpenPLC/OpenPLC_v2 && ./core/openplc
